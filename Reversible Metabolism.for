@@ -35,47 +35,36 @@ C----------------------------------------------------------------------C
 C   Enter as Indicated                                                 C
 C----c-----------------------------------------------------------------C
 
-      NDEqs   =  14   ! Enter # of Diff. Eqs.
-      NSParam =  16   ! Enter # of System Parameters.
-      NVparam =  2  ! Enter # of Variance Parameters.
-      NSecPar =  0  ! Enter # of Secondary Parameters.
+      NDEqs   =  8   ! Enter # of Diff. Eqs.
+      NSParam =  10   ! Enter # of System Parameters.
+      NVparam =  2   ! Enter # of Variance Parameters.
+      NSecPar =  0   ! Enter # of Secondary Parameters.
       NSecOut =  0  ! Enter # of Secondary Outputs (not used).
       Ieqsol  =  1  ! Model type: 1 - DIFFEQ, 2 - AMAT, 3 - OUTPUT only.
-      Descr   = ' interaction '
+      Descr   = ' REVER1  '
 
 CC
 C----------------------------------------------------------------------C
 C   Enter Symbol for Each System Parameter (eg. Psym(1)='Kel')         C
 C----c-----------------------------------------------------------------C
-
-	   Psym(1)='kinss'
-	   Psym(2)='kout'
-	   Psym(3)='Sgmax'
-	   Psym(4)='SC50g'
-	   Psym(5)='Sbmax'
-       Psym(6)='SC50b'
-	   Psym(7)='kd'
-	   Psym(8)='ga1'
-	   Psym(9)='ga2'
-	   Psym(10)='psi'
-	   Psym(11)='Igmax'
-	   Psym(12)='IC50g'
-	   Psym(13)='Ibmax'
-       Psym(14)='IC50b'
-	   Psym(15)='psi2'
-	   Psym(16)='KT'
-	   
-
-
+		Psym(1)='CL12'
+		Psym(2)='CL21'
+		Psym(3)='CL10'
+		Psym(4)='CL20'
+		Psym(5)='V1'
+		Psym(6)='V2'
+		Psym(7)='V3'
+		Psym(8)='CLD1'
+		Psym(9)='CLD2'
+		Psym(10)='V4'
 
 CC
 C----------------------------------------------------------------------C
 C   Enter Symbol for Each Variance Parameter {eg: PVsym(1)='Sigma'}    C
 C----c-----------------------------------------------------------------C
-       PVsym(1)='int'
-	   PVsym(2)='sig'
-
-
+		PVsym(1)='intercept'
+		PVsym(2)='Sigma'
+		
 CC
 C----------------------------------------------------------------------C
 C   Enter Symbol for Each Secondary Parameter {eg: PSsym(1)='CLt'}     C
@@ -97,65 +86,30 @@ C######################################################################C
         Include 'model.inc'
 
         Real*8 T,X(MaxNDE),XP(MaxNDE)
-		Real*8 kout,Sgmax,SC50g,Sbmax,SC50b,kd,kinss,ga1,ga2,psi
-		Real*8 gf1,gf2,gf3,bf1,bf2,bf3,Igmax,IC50g,Ibmax,IC50b
-		Real*8 GF4,GF5,GF6,BF4,BF5,BF6,psi2,KT
-CC
+		Real*8 CL12,CL21,CL10,CL20,V1,V2,CLD1,V3,CLD2,V4
 C----------------------------------------------------------------------C
 C   Enter Differential Equations Below  {e.g.  XP(1) = -P(1)*X(1) }    C
 C----c-----------------------------------------------------------------C
-		 kinss=P(1)
-		 kout=P(2)
-		 Sgmax=P(3)
-		 SC50g=P(4)
-		 Sbmax=P(5)
-		 SC50b=P(6)
-		 kd=P(7)
-		 ga1=P(8)
-		 ga2=P(9)
-		 psi=P(10)
-		 Igmax=P(11)
-		 IC50g=P(12)
-		 Ibmax=P(13)
-		 IC50b=P(14)
-		 psi2=p(15)
-		 KT=P(16)
-		 !COMPETITIVE
-		 gf1 = (6/(psi*SC50g))**ga1
-		 gf2 = (10/(psi*SC50g))**ga1
-		 gf3 = (20/(psi*SC50g))**ga1
-		 gf4 = (6/(psi2*IC50g))**ga1
-		 gf5 = (10/(psi2*IC50g))**ga1
-		 gf6 = (20/(psi2*IC50g))**ga1
-		 
-		 bf1 = (50/(psi*SC50b))**ga2
-		 bf2 = (200/(psi*SC50b))**ga2
-		 bf3 = (500/(psi*SC50b))**ga2
-		 bf4 = (50/(psi2*IC50b))**ga2
-		 bf5 = (200/(psi2*IC50b))**ga2
-		 bf6 = (500/(psi2*IC50b))**ga2
-
-		 XP(1)=X(5)-kout*X(1)
-		 XP(2)=X(5)*(1-(Igmax*gf4+Ibmax*bf4)/(bf4+gf4+1))-
-     C      kout*(1+X(8))*X(2)
-		 XP(3)=X(5)*(1-(Igmax*gf5+Ibmax*bf5)/(bf5+gf5+1))-
-     C      kout*(1+X(11))*X(3)
-		 XP(4)=X(5)*(1-(Igmax*gf6+Ibmax*bf6)/(bf6+gf6+1))-
-     C      kout*(1+X(14))*X(4)
+		CL12=P(1)
+		CL21=P(2)
+		CL10=P(3)
+		CL20=P(4)
+		V1=P(5)
+		V2=P(6)
+		V3=P(7)
+		CLD1=P(8)
+		CLD2=P(9)
+		V4=P(10)
 		
-		 XP(5)=kd*X(5)*(1-X(5)/kinss)
-		 
-		 XP(6)=kt*((Sgmax*gf1+Sbmax*bf1)/(bf1+gf1+1)-X(6))
-		 XP(7)=kt*(X(6)-X(7))
-		 XP(8)=kt*(X(7)-X(8))
-		 XP(9)=kt*((Sgmax*gf2+Sbmax*bf2)/(bf2+gf2+1)-X(9))
-		 XP(10)=kt*(X(9)-X(10))
-		 XP(11)=kt*(X(10)-X(11))
-		 XP(12)=kt*((Sgmax*gf3+Sbmax*bf3)/(bf3+gf3+1)-X(12))
-		 XP(13)=kt*(X(12)-X(13))
-		 XP(14)=kt*(X(13)-X(14))
-		 
-		 
+		XP(1)=-(CL10+CL12+CLD1)*X(1)/V1+CL21*X(2)/V1+CLD1*X(5)/V1
+		XP(2)=CL12*X(1)/V2-(CL20+CL21)*X(2)/V2+CLD2*X(6)/V2-CLD2*X(2)/V2
+		XP(3)=-(CL20+CL21+CLD2)*X(3)/V2+CL12*X(4)/V2+CLD2*X(6)/V2
+		XP(4)=CL21*X(3)/V1-(CL10+CL12)*X(4)/V1+CLD1*X(5)/V1-CLD1*X(4)/V1
+		XP(5) = CLD1*X(1)/V3-CLD1*X(5)/V3
+		XP(6) = CLD2*X(3)/V4-CLD2*X(6)/V4
+		XP(7) = CLD1*X(4)/V3-CLD1*X(5)/V3
+		XP(8) = CLD2*X(2)/V4-CLD1*X(6)/V4
+		
 C----------------------------------------------------------------------C
 C----------------------------------------------------------------------C
 C
@@ -170,19 +124,18 @@ C######################################################################C
         Include 'globals.inc'
         Include 'model.inc'
 
-        Real*8 Y(MaxNOE),T,X(MaxNDE),V
-
+        Real*8 Y(MaxNOE),T,X(MaxNDE)
 
 CC
 C----------------------------------------------------------------------C
 C   Enter Output Equations Below   {e.g.  Y(1) = X(1)/P(2) }           C
 C----c-----------------------------------------------------------------C
-		 Y(1)=X(1)
-		 Y(2)=X(2)
-		 Y(3)=X(3)
-		 Y(4)=X(4)
 
-		 
+        Y(1) = X(1)
+		Y(2) = X(2)
+		Y(3) = X(3)
+		Y(4) = X(4)
+
 C----------------------------------------------------------------------C
 C----------------------------------------------------------------------C
 C
@@ -204,13 +157,11 @@ C----------------------------------------------------------------------C
 C   Enter Variance Model Equations Below                               C
 C         {e.g. V(1) = (PV(1) + PV(2)*Y(1))**2 }                       C
 C----c-----------------------------------------------------------------C
-
-         V(1) = (PV(1) + PV(2)*Y(1))**2
+		 V(1) = (PV(1) + PV(2)*Y(1))**2 
 		 V(2) = (PV(1) + PV(2)*Y(2))**2
-		 V(3) = (PV(1) + PV(2)*Y(3))**2
-		 V(4) = (PV(1) + PV(2)*Y(4))**2
+		 V(3) = (PV(1) + PV(2)*Y(1))**2 
+		 V(4) = (PV(1) + PV(2)*Y(2))**2
 
-		 
 C----------------------------------------------------------------------C
 C----------------------------------------------------------------------C
 C
