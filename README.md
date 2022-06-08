@@ -1,1 +1,1 @@
-# Basic-PK-PD-Model
+# Basic PK/PD Model Exercise
